@@ -1,0 +1,272 @@
+html,
+body {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  background-color: gray;
+}
+
+html {
+  font-size: 67%;
+}
+
+.heading {
+  font-size: 1.5rem;
+  display: flex;
+  height: 10vh;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  background-color: #333;
+  width: 100%;
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+.handle {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.handle span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background-color: cyan;
+  transition: all 0.3s ease;
+}
+
+.nav-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  text-decoration-style: none;
+  width: 17rem;
+  height: 100vh;
+  background-color: #333;
+  color: white;
+  transition: left 0.3s ease;
+ }
+
+.nav-menu a {
+  text-decoration: none;
+  color: white;
+  font-size: 2.5rem;
+  padding: 5px;
+  display: grid;
+  justify-content: left;
+  text-align: left;
+  transition: color 0.2s ease-in-out;
+}
+
+nav ul {
+  list-style: none;
+  text-align: left;
+}
+
+.nav-menu a:hover {
+  color: cyan;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.home {
+  margin-left: 250px;
+  transition: margin 0.3s ease;
+}
+
+.search {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 2.7rem;
+  padding: 1.5rem;
+}
+
+.blog-card {
+  max-width: 100%;
+  padding: 10px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 30px auto;
+}
+
+.blog-card h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #333;
+}
+.blog-actions a{
+  font-size:2.2rem;
+}
+.blog-actions a:hover{
+  font-weight:bold;
+  color:cyan;
+}
+
+.blog-actions button{
+  font-size:2.2rem;
+  background-color: red;
+}
+.blog-actions button:hover{
+  font-weight:bold;
+}
+
+.image-container {
+  width: 40rem;
+  height: 40rem;
+  display: flex;
+  justify-content: center;
+
+}
+
+.blog-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.blog-content {
+  
+  overflow-wrap:break-word;
+  white-space: normal;
+  font-size: 1.8rem;
+  overflow: hidden;
+  padding-bottom: 50px;
+
+}
+
+.home {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.image-preview {
+  display: block;
+  margin: 1rem auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.page-2 {
+  margin-top: 9rem;
+
+}
+
+.title,
+.content,
+.image-upload {
+  font-size: 2.3rem;
+  display: flex;
+  height: 5rem;
+  width: 50rem;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+.title{
+  
+}
+
+
+.title::placeholder,
+.content::placeholder {
+  text-align: center;
+}
+
+.submit {
+  height: 5rem;
+  align-items: center;
+  display: flex;
+  font-size: 3.5rem;
+  padding: 15px;
+  background-color: lightgray;
+  margin: 80px auto;
+  border-radius: 23px;
+}
+
+.submit:hover {
+  background-color: darkslategray;
+}
+
+
+.footer {
+  font-size: 1.5rem;
+  height: 7vh;
+  color: white;
+  background-color: #333;
+  width: 100%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about {
+  font-size: 3rem;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.about img {
+  margin: 0 auto;
+}
+
+strong {
+  font-size: 3rem;
+}
+
+.points {
+  text-align: left;
+}
+
+p {
+  margin: 0;
+}
+
+.styling {
+  font-family: geneva;
+}
+
+.nopage{
+  padding-top:60px;
+  display:grid;
+  justify-content: center;
+  font-size:2rem;
+ 
+}
+.nopage a{
+  text-decoration: none;
+  padding:15px;
+  text-align: center;
+  font-size:3rem;
+  color:white;
+}
+.nopage h1, .nopage p{
+  color:red;
+  padding:20px;
+}
+.nopage a:hover{
+  color:cyan;
+  font-weight:bold;
+}
