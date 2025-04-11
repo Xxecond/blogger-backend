@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import NotFound from './pages/NotFound';
 function App() {
   return (
-    <BrowserRouter basename="/blogger">
+    <BrowserRouter>
       <Navbar />
       <Header />
       <Routes>
