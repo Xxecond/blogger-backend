@@ -18,10 +18,6 @@ body {
   position:relate;
 }
 
-body.nav-open{
-  transform:translate(17rem);
-  overflow-x:hidden;
-}
 
 .heading {
   font-size: 1.3rem;
