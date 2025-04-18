@@ -60,7 +60,7 @@ function CreateBlog() {
           )}
           
           <textarea 
-            placeholder="Content" 
+            placeholder="Type content here" 
             value={content} 
             className='content' 
             onChange={e => setContent(e.target.value)} 

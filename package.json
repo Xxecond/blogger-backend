@@ -1,12 +1,12 @@
 {
   "name": "blogger-site",
   "version": "0.0.0",
-  "homepage":"https://xxecond.github.io/blogger/",
+  "homepage": "https://xxecond.github.io/blogger/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"

@@ -1,3 +1,4 @@
+import Navbar from "./Navbar";
 import React from "react";
 import { useLocation } from "react-router-dom";
 
@@ -7,14 +8,15 @@ function Header() {
   const headings = {
     '/': 'FOOTBALL INSIDER ',
     '/create': 'Create New Blog',
-    '/edit/1743673110083':'Edit Blog',
+    '/edit':'Edit Blog',
     '/about':'About'
   };
 
-  const pageName = headings[location.pathname] || 'Error';
+  const pageName = headings[location.pathname] || 'Page';
 
   return (
     <div className="heading">
+      <Navbar />
       <h1>{pageName}</h1>
     </div>
   );

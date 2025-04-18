@@ -15,7 +15,7 @@ function About() {
     <img src ={profile} alt='profile-pic' className="profile-pic" />
             <h6>Created by Manerss,<br /> a passionate football enthusiast<br /> dedicated<b /> to bringing fans closer to <br />the game.</h6>
            
-    <p className="styling">Never miss an update!!</p><br />
+    <p className="styling"><mark>Never miss an update!!</mark></p><br />
 <p>
  Subscribe now and follow us for daily football news and insights. Stay ahead of the game!</p>
 </div>
