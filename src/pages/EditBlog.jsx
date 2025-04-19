@@ -92,7 +92,7 @@ function EditBlog() {
               <button 
                 type="button" 
                 onClick={() => setImage(null)} 
-                className="remove-image-btn"
+                className="rm-img-btn"
               >
                 Remove Image
               </button>

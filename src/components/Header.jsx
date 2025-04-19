@@ -7,7 +7,7 @@ function Header() {
 
   const headings = {
     '/': 'FOOTBALL INSIDER ',
-    '/create': 'Create New Blog',
+    '/create': 'New Blog',
     '/edit':'Edit Blog',
     '/about':'About'
   };

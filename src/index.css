@@ -1,26 +1,29 @@
-*, *::before,*::after{
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-html,
-body {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+
+html, body {
+  height: 100%;
   max-width: 100%;
   background-color: gray;
-  font-size: 67%;
+  font-size: 62.5%;
 }
 
-.body{
-  transition:transform 0.3s ease;
-  position:relate;
+body {
+  transition: transform 0.3s ease;
+  position: relative;
+  overflow-x: hidden;
 }
 
+body.nav-open {
+ overflow:hidden;
+  transform: translateX(17rem);
+}
 
 .heading {
-  font-size: 1.3rem;
+  font-size: 1.6rem; 
   display: flex;
   padding-left: 20px;
   height: 8vh;
@@ -29,17 +32,27 @@ body {
   align-items: center;
   background-color: #333;
   width: 100%;
+  position: relative;
+  z-index: 900;
 }
 
 .nav {
-  position: absolute;
-  top: -0.5rem;
-  left: 0.5rem;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: -17rem;
+  bottom:0;
+  width: 17rem;
+  z-index: 1000;
+  transition: left 0.3s ease;
+  background-color: #333;
+}
+
+.nav.show {
+  left: 0;
 }
 
 .handle {
-  position: absolute;
+  position: fixed;
   left: 20px;
   top: 20px;
   width: 30px;
@@ -50,6 +63,7 @@ body {
   justify-content: space-around;
 }
 
+
 .handle span {
   display: block;
   width: 100%;
@@ -59,53 +73,102 @@ body {
 }
 
 .nav-menu {
-  width: 17rem;
-  height: 100vh;
-  background-color: #333;
-  color: white;
-  transition: left 0.3s ease;
+  width: 100%;
+  padding-top: 5vh;
+}
+
+.nav-menu ul {
+  list-style: none;
+  padding: 15px;
 }
 
 .nav-menu a {
   text-decoration: none;
+  display:block;
   color: white;
-  font-size: 2.5rem;
-  padding: 5px;
-  display: grid;
-  justify-content: left;
-  text-align: left;
-  transition: color 0.2s ease-in-out;
+  font-size: 2rem;
+  transition: all 0.2s ease-in-out;
 }
 
-nav ul {
-  list-style: none;
-  text-align: left;
+
+.nav-menu li {
+  margin-bottom: 13px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding:5px;
+  transition: all 0.3s ease;
 }
 
+.nav-menu li:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 .nav-menu a:hover {
   color: cyan;
-  text-decoration: underline;
   font-weight: bold;
+  padding-left: 10px;
 }
 
+
+body.nav-open .handle {
+  left: calc(1rem + 10px);
+  background-color: #333;
+  border: 2px solid cyan;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+}
+
+body.nav-open .handle span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+}
+
+body.nav-open .handle span::before,
+body.nav-open .handle span::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background-color: cyan;
+  top: 50%;
+  left: 50%;
+}
+
+body.nav-open .handle span::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+body.nav-open .handle span::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.main-content {
+  transition: transform 0.3s ease;
+  padding-top: 8vh; 
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
 
 .search {
   position: absolute;
-
   right: 0;
   padding-right: 20px;
 }
 
 .blog-card {
-  width:100%;
+  width: 100%;
   max-width: 500px;
   background-color: #333;
   border-radius: 8px;
   overflow: hidden;
-  margin: 50px auto;
+  margin:1rem auto;
   word-wrap: break-word;
   white-space: normal;
+
 }
+
 
 .blog-content {
   display: -webkit-box;
@@ -116,11 +179,11 @@ nav ul {
   color: #fff;
   font-weight: lighter;
   font-family: 'Segoe ui';
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   border-radius: 10px;
   margin: 10px;
-  min-height: 3em; /* Adjust based on your line-height */
-  line-height: 1.5em; /* Should match the calculation */
+  min-height: 3em;
+  line-height: 1.5em;
 }
 
 .blog-content.expanded {
@@ -130,11 +193,10 @@ nav ul {
 
 .view-more, .view-less {
   color: royalblue;
-  font-size: 1.3rem;
-  font-weight: lighter;
+  font-size: 1.4rem; 
   position: absolute;
   right: 3px;
-  bottom: 0.1px;
+  bottom: 1px;
   background: #333;
   padding-left: 5px;
 }
@@ -146,30 +208,29 @@ nav ul {
 }
 
 .blog-card h2 {
-  font-size: 2.1rem;
+  font-size: 2.4rem;
   text-align: center;
-  margin: auto;
-  padding-bottom:5px;
+  padding-bottom: 10px;
+  padding-top:7rem;
   color: #fff;
-  font-family:impact;
-  background-color:gray;
-  font-weight:lighter;
-  margin-top:0;
-  margin:0 auto;
-justify-content:center;
-
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  background-color: gray;
+  font-weight: lighter;
+  margin: 0 auto;
 }
 
-.blog-actions{
-  margin:5px auto;
-  flex-direction:row;
-  display:flex;
+.blog-actions {
+  margin: 5px auto;
+  flex-direction: row;
+  display: flex;
+ 
 }
+
 .blog-actions a {
   color: deepskyblue;
-  font-size: 2.2rem;
-  padding:0 10px;
-  padding-top:5px;
+  font-size: 2rem;
+  padding: 0 10px;
+  padding-top:3px;
 }
 
 .blog-actions a:hover {
@@ -178,19 +239,22 @@ justify-content:center;
 }
 
 .blog-actions button {
-  font-size: 2.2rem;
+  font-size: 2rem;
   background-color: red;
+ padding:1px;
+  cursor: pointer;
 }
 
 .blog-actions button:hover {
   font-weight: bold;
+  color:white;
 }
-
 
 .blog-image {
   display: block;
   height: 60vh;
   width: 100%;
+  object-fit: cover;
 }
 
 .home {
@@ -206,25 +270,19 @@ justify-content:center;
   font-weight: bold;
 }
 
-.blogdirect a {
-  animation: pulseText 1s infinite;
-  color: white;
-}
-
 .blogdirect a:hover {
   color: cyan;
 }
 
+
+.blogdirect a {
+  animation: pulseText 1s infinite;
+  color: white;
+  text-decoration: none;
+}
 @keyframes pulseText {
-
-  0%,
-  100% {
-    font-weight: lighter;
-  }
-
-  50% {
-    font-weight: bolder;
-  }
+  0%, 100% { font-weight: lighter; }
+  50% { font-weight: bolder; }
 }
 
 
@@ -238,26 +296,38 @@ justify-content:center;
   max-width: 100%;
   height: 35vh;
   width: 35vh;
+
 }
+
+.rm-img-btn{
+  display:flex;
+  justify-content:center;
+margin:7px auto;
+}
+
 
 .title,
 .content,
 .image-upload {
-  font-size: 2.3rem;
+  font-size: 2rem;
   display: flex;
   height: 4rem;
-  width: 45vh;
+  width: 90%;
+  max-width: 45vh;
   align-items: center;
   justify-content: center;
   margin: 2rem auto;
+  padding: 0 10px;
 }
 
 .image-upload {
   padding-top: 1rem;
+  flex-direction: column;
 }
 
 .content {
   height: 30vh;
+  resize: vertical;
 }
 
 .title::placeholder {
@@ -268,21 +338,23 @@ justify-content:center;
   height: 5rem;
   align-items: center;
   display: flex;
-  font-size: 3.5rem;
+  font-size: 2.5rem; 
   padding: 15px;
   background-color: lightgray;
   margin: 70px auto;
   border-radius: 23px;
+  border: none;
+  cursor: pointer;
 }
 
 .submit:hover {
   background-color: darkslategray;
+  color: white;
 }
 
-
 .footer {
-  font-size: 1.5rem;
-  height: 7vh;
+  font-size: 1.6rem; 
+  min-height: 7vh;
   color: white;
   background-color: #333;
   width: 100%;
@@ -290,39 +362,43 @@ justify-content:center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 10px 0;
 }
 
 .about {
   width: 100%;
-  font-size: 1.4rem;
+  font-size: 1.6rem; 
   display: grid;
   justify-content: center;
   align-items: center;
   text-align: center;
+  padding: 20px;
 }
 
 .about img {
   display: block;
   margin: 0 auto;
-  height: 50vh;
-  width: 45vh;
-
+  height: auto;
+  max-height: 50vh;
+  width: 90%;
+  max-width: 45vh;
+  object-fit: contain;
 }
 
-
-
 strong {
-  font-size: 1.4rem;
+  font-size: 1.6rem; 
 }
 
 .points {
   text-align: left;
-padding:0 10px;
+  padding: 0 10px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 h6 {
   font-size: 2rem;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
 }
 
 mark {
@@ -330,11 +406,11 @@ mark {
 }
 
 p {
-  margin: 0;
+  margin: 1rem 0;
 }
 
 .styling {
-  font-family: geneva;
+  font-family: Geneva, Verdana, sans-serif;
 }
 
 .nopage {
@@ -342,15 +418,16 @@ p {
   display: grid;
   justify-content: center;
   font-size: 2rem;
-
+  text-align: center;
 }
 
 .nopage a {
   text-decoration: none;
   padding: 15px;
   text-align: center;
-  font-size: 3rem;
+  font-size: 2.5rem; 
   color: white;
+  display: inline-block;
 }
 
 .nopage h1,
@@ -362,4 +439,29 @@ p {
 .nopage a:hover {
   color: cyan;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  body.nav-open {
+    transform: translateX(20%);
+  }
+  
+  .nav {
+    width: 20%;
+    left: -20%;
+  }
+  
+  .blog-card {
+    margin: 30px auto;
+  }
+  
+  .blog-image {
+    height: 40vh;
+  }
+  
+  .title,
+  .content,
+  .image-upload {
+    width: 95%;
+  }
 }

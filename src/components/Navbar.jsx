@@ -7,22 +7,21 @@ function Navbar() {
 
   const handleNav = () => {
     setShowNav(!showNav);
-  document.querySelector(".content").classList.toggle("shift", !showNav);
+    document.body.classList.toggle("nav-open", !showNav);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
         setShowNav(false);
+        document.body.classList.remove("nav-open");
       }
     };
 
-    // Add when menu is open
     if (showNav) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
-    // Clean up
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -39,18 +38,29 @@ function Navbar() {
         </div>
       )}
       
-      {showNav && (
-        <ul className={`nav-menu ${showNav ? "show": ""}`} onClick={(e) => e.stopPropagation()}>
+      <div className={`nav-menu ${showNav ? "show" : ""}`} onClick={(e) => e.stopPropagation()}>
+        <ul>
           <li>
-            <Link to="/" onClick={handleNav}>Home</Link>
+            <Link to="/" onClick={() => {
+              setShowNav(false);
+              document.body.classList.remove("nav-open");
+            }}>Home</Link>
           </li>
           <li>
-            <Link to="/create" onClick={handleNav}>Create Blog</Link>
+            <Link to="/create" onClick={() => {
+              setShowNav(false);
+              document.body.classList.remove("nav-open");
+            }}>Create Blog</Link>
           </li>
-          <li><Link to="/about" onClick={handleNav}>About</Link></li>
+          <li>
+            <Link to="/about" onClick={() => {
+              setShowNav(false);
+              document.body.classList.remove("nav-open");
+            }}>About</Link>
+          </li>
         </ul>
-      )} </nav>
+      </div>
+    </nav>
   );
 }
-
 export default Navbar;
