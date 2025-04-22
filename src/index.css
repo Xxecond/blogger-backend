@@ -18,12 +18,12 @@ body {
 }
 
 body.nav-open {
- overflow:hidden;
+  overflow: hidden; 
   transform: translateX(17rem);
 }
 
 .heading {
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
   display: flex;
   padding-left: 20px;
   height: 8vh;
@@ -34,14 +34,32 @@ body.nav-open {
   width: 100%;
   position: relative;
   z-index: 900;
+  transform: translateX(0);
+transition:transform 0.3s ease;
+}
+.heading.shifted{
+  transform:translateX(23rem);
+}
+
+.main-content {
+  transition: transform 0.3s ease;
+  padding-top: 8vh;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  transform: translateX(0);
+}
+
+.main-content.shifted {
+  transform: translateX(23rem);
 }
 
 .nav {
   position: fixed;
   top: 0;
-  left: -17rem;
-  bottom:0;
-  width: 17rem;
+  left: -23rem;
+  height: 130vh;
+  width: 23rem;
   z-index: 1000;
   transition: left 0.3s ease;
   background-color: #333;
@@ -51,6 +69,9 @@ body.nav-open {
   left: 0;
 }
 
+.nav.show ~ .heading .handle{
+  display:none;
+}
 .handle {
   position: fixed;
   left: 20px;
@@ -63,7 +84,6 @@ body.nav-open {
   justify-content: space-around;
 }
 
-
 .handle span {
   display: block;
   width: 100%;
@@ -72,19 +92,69 @@ body.nav-open {
   transition: all 0.3s ease;
 }
 
+
+@keyframes slideinleft{
+  0%   { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes linkColorChange{
+  0%, 99% {
+    color: cyan;
+  }
+  100% {
+    color: white;
+  }
+
+}
 .nav-menu {
-  width: 100%;
-  padding-top: 5vh;
+  width: 74%;
+  margin: 0 auto;
+}
+
+.slidein {
+  height:20%;
+  margin-top:8rem;
+  display:block;
+  animation: slideinleft 1s ease forwards;
+ 
+}
+
+.slidein a {
+  color: cyan; 
+  animation: linkColorChange 1.3s ease forwards;
+  text-decoration: none; 
+  transition:all 0.3s ease;
+}
+
+.nav-menu a:hover {
+  color: cyan;
+  font-weight: bold;
+ padding-left:5vh;
+ animation: none;
+}
+
+.nav-menu {
+  width: 74%;
+  margin: 0 auto;
+}
+
+.slidein {
+  height:20%;
+  margin-top:8rem;
+  display:block;
+  animation: slideinleft 1s ease forwards;
 }
 
 .nav-menu ul {
-  list-style: none;
+  list-style: none !important;
   padding: 15px;
 }
 
 .nav-menu a {
   text-decoration: none;
   display:block;
+  list-style: none !important;
   color: white;
   font-size: 2rem;
   transition: all 0.2s ease-in-out;
@@ -95,22 +165,17 @@ body.nav-open {
   margin-bottom: 13px;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-  padding:5px;
+  padding:10px;
+  list-style: none !important;
   transition: all 0.3s ease;
 }
 
 .nav-menu li:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
-.nav-menu a:hover {
-  color: cyan;
-  font-weight: bold;
-  padding-left: 10px;
-}
 
 
-body.nav-open .handle {
-  left: calc(1rem + 10px);
+.nav.show .handle {
   background-color: #333;
   border: 2px solid cyan;
   border-radius: 5px;
@@ -118,22 +183,40 @@ body.nav-open .handle {
   align-items: center;
 }
 
-body.nav-open .handle span {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: transparent;
-}
-
-body.nav-open .handle span::before,
-body.nav-open .handle span::after {
-  content: '';
-  position: absolute;
+.nav.show .handle span {
   width: 20px;
   height: 2px;
   background-color: cyan;
+  position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nav.show .handle span:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.nav.show .handle span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav.show .handle span:nth-child(3) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.nav:not(.show) .handle {
+  background-color: transparent;
+  border: none;
+  justify-content: space-around;
+}
+
+.nav:not(.show) .handle span {
+  width: 100%;
+  height: 3px;
+  position: static;
+  transform: none;
+  opacity: 1;
 }
 
 body.nav-open .handle span::before {
@@ -143,9 +226,10 @@ body.nav-open .handle span::before {
 body.nav-open .handle span::after {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
+
 .main-content {
   transition: transform 0.3s ease;
-  padding-top: 8vh; 
+  padding-top: 8vh;
   min-height: 100vh;
   position: relative;
   z-index: 1;
@@ -153,13 +237,14 @@ body.nav-open .handle span::after {
 
 .search {
   position: absolute;
+  top:15px;
   right: 0;
   padding-right: 20px;
 }
 
 .blog-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   background-color: #333;
   border-radius: 8px;
   overflow: hidden;
@@ -181,7 +266,7 @@ body.nav-open .handle span::after {
   font-family: 'Segoe ui';
   font-size: 1.6rem;
   border-radius: 10px;
-  margin: 10px;
+  margin: 0 20px;
   min-height: 3em;
   line-height: 1.5em;
 }
@@ -193,9 +278,9 @@ body.nav-open .handle span::after {
 
 .view-more, .view-less {
   color: royalblue;
-  font-size: 1.4rem; 
+  font-size: 1.4rem;
   position: absolute;
-  right: 3px;
+  right: 1px;
   bottom: 1px;
   background: #333;
   padding-left: 5px;
@@ -223,7 +308,6 @@ body.nav-open .handle span::after {
   margin: 5px auto;
   flex-direction: row;
   display: flex;
- 
 }
 
 .blog-actions a {
@@ -254,11 +338,10 @@ body.nav-open .handle span::after {
   display: block;
   height: 60vh;
   width: 100%;
-  object-fit: cover;
 }
 
 .home {
-  padding: 20px;
+  margin-top:-8rem;
 }
 
 .blogdirect {
@@ -286,9 +369,6 @@ body.nav-open .handle span::after {
 }
 
 
-.page-2 {
-  margin-top: 6rem;
-}
 
 .image-preview {
   display: block;
@@ -304,7 +384,6 @@ body.nav-open .handle span::after {
   justify-content:center;
 margin:7px auto;
 }
-
 
 .title,
 .content,
@@ -338,10 +417,10 @@ margin:7px auto;
   height: 5rem;
   align-items: center;
   display: flex;
-  font-size: 2.5rem; 
+  font-size: 2.5rem;
   padding: 15px;
   background-color: lightgray;
-  margin: 70px auto;
+  margin: 67px auto;
   border-radius: 23px;
   border: none;
   cursor: pointer;
@@ -353,7 +432,7 @@ margin:7px auto;
 }
 
 .footer {
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
   min-height: 7vh;
   color: white;
   background-color: #333;
@@ -367,7 +446,7 @@ margin:7px auto;
 
 .about {
   width: 100%;
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
   display: grid;
   justify-content: center;
   align-items: center;
@@ -386,14 +465,15 @@ margin:7px auto;
 }
 
 strong {
-  font-size: 1.6rem; 
+  font-size: 1.6rem;
 }
 
 .points {
   text-align: left;
-  padding: 0 10px;
+  padding: 0 7px;
   max-width: 800px;
   margin: 0 auto;
+  margin-top:-60px;
 }
 
 h6 {
@@ -425,7 +505,7 @@ p {
   text-decoration: none;
   padding: 15px;
   text-align: center;
-  font-size: 2.5rem; 
+  font-size: 2.5rem;
   color: white;
   display: inline-block;
 }
@@ -441,27 +521,49 @@ p {
   font-weight: bold;
 }
 
-@media (max-width: 768px) {
-  body.nav-open {
-    transform: translateX(20%);
-  }
-  
+hr{
+  margin-bottom:10px;
+}
+
+.version{
+  padding-top:50rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+
   .nav {
-    width: 20%;
-    left: -20%;
+    width: 40%;
+    left: -40%;
   }
-  
+
+.main-content.shifted {
+  transform: translateX(17rem);
+}
+.heading.shifted{
+  transform:translateX(17rem)
+}
+
   .blog-card {
+    max-width:100%;
     margin: 30px auto;
   }
-  
+
   .blog-image {
-    height: 40vh;
+    height: 70vh;
+    width:100%;
+    display:block;
   }
-  
+
+  .nav-menu {
+    width: 80%;
+  }
+
   .title,
   .content,
   .image-upload {
     width: 95%;
   }
+  
 }
+

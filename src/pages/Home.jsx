@@ -8,32 +8,31 @@ function Home() {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("blogs") || "[]");
-      setBlogs(stored);
-    } catch (error) {
-      console.error("Failed to load blogs:", error);
-      setBlogs([]);
-    }
+    const stored = JSON.parse(localStorage.getItem("blogs") || "[]");
+    setBlogs(stored);
   }, []);
 
   const handleDelete = (id) => {
-    const updatedBlogs = blogs.filter(blog => blog.id !== id);
-    localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
-    setBlogs(updatedBlogs);
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      const updatedBlogs = blogs.filter(blog => blog.id !== id);
+      localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
+      setBlogs(updatedBlogs); 
+    }
   };
-
+ 
   const filteredBlogs = blogs.filter(blog =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+    blog?.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="home">
       <SearchBar setSearchTerm={setSearchTerm} />
       {filteredBlogs.length > 0 ? (
-        filteredBlogs.map(blog => (
-          <BlogCard key={blog.id} blog={blog} onDelete={handleDelete} />
-        ))
+        filteredBlogs.map(blog =>
+          blog && (
+            <BlogCard key={blog.id} blog={blog} onDelete={handleDelete} />
+          )
+        )
       ) : (
         <div className="blogdirect">
           <Link to="create">CREATE NEW BLOG</Link>

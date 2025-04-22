@@ -10,18 +10,20 @@ import Footer from './components/Footer';
 import NotFound from './pages/NotFound';
 
 function App() {
-  return ( 
+  return (
     <>
       <Navbar />
       <Header />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/create' element={<CreateBlog />} />
-        <Route path='/about' element={<><About /><Footer /></>} />
-        <Route path='/blog/:id' element={<BlogDetails />} />
-        <Route path='/edit/:id' element={<EditBlog />} />
-        <Route path='*' element={<NotFound />} />
-      </Routes>
+      <div className="main-content">
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/create' element={<CreateBlog />} />
+          <Route path='/about' element={<><About /><Footer /></>} />
+          <Route path='/blog/:id' element={<BlogDetails />} />
+          <Route path='/edit/:id' element={<EditBlog />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </div>
     </>
   );
 }

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-function BlogCard({ blog }) {
+function BlogCard({ blog, onDelete }) {
+  if (!blog || !blog.content) return null; // safe guard
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const contentRef = useRef(null);
@@ -9,11 +11,10 @@ function BlogCard({ blog }) {
 
   useEffect(() => {
     if (contentRef.current) {
-      // Check if content is overflowing (scrollHeight > clientHeight)
-      const element = contentRef.current;
-      setIsOverflowing(element.scrollHeight > element.clientHeight);
+      const el = contentRef.current;
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
     }
-  }, [blog.content]); // Re-check when content changes
+  }, [blog.content]);
 
   const handleToggle = () => {
     if (isOverflowing) {
@@ -26,7 +27,7 @@ function BlogCard({ blog }) {
       const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
       const updatedBlogs = blogs.filter(b => b.id !== blog.id);
       localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
-      navigate(0);
+      onDelete(blog.id); // notify parent instantly
     }
   };
 
