@@ -71,7 +71,7 @@ function Navbar() {
           <li><Link to="/" onClick={closeNav}>Home</Link></li>
           <li><Link to="/create" onClick={closeNav}>Create Blog</Link></li>
           <li><Link to="/about" onClick={closeNav}>About</Link></li>
-          <h6 className="version"><hr />version 1.0</h6>
+          <h6 className="version">version 1.0</h6>
         </ul>
       </nav>
       
