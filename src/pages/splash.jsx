@@ -10,7 +10,7 @@ const Splash = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 4000); // show splash for 3 seconds
+    }, 2000); // show splash for 4 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -18,8 +18,8 @@ const Splash = () => {
   useEffect(() => {
     if (!showSplash) {
       const delay = setTimeout(() => {
-        navigate('/'); // redirect to root (Home page)
-      }, 550); // wait for fade-out animation
+        navigate('/'); // redirect to home
+      }, 550); // wait for animation to finish
       return () => clearTimeout(delay);
     }
   }, [showSplash, navigate]);
@@ -28,17 +28,11 @@ const Splash = () => {
     <AnimatePresence>
       {showSplash && (
         <motion.div
+          className="splash-screen"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          style={{
-            height: '100vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff'
-          }}
         >
           <img
             src={b}

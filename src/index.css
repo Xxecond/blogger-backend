@@ -11,25 +11,19 @@ html, body {
   font-size: 62.5%;
 }
 
-body {
-  transition: transform 0.3s ease;
-  position: relative;
-  overflow-x: hidden;
-}
-
-
 .splash-screen {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;   /* Full width */
+  height: 100vh;  /* Full height */
   background: #f8f9fa;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
+
 
 .logo-container {
   display: flex;
@@ -123,6 +117,25 @@ transition:transform 0.3s ease;
   transition: all 0.3s ease;
 }
 
+.nav-menu {
+  width: 74%;
+  margin: 0 auto;
+}
+
+.slidein {
+  height:20%;
+  margin-top:8rem;
+  display:block;
+  animation: slideinleft 1s ease forwards;
+}
+
+.slidein a {
+  color: cyan; 
+  animation: linkColorChange 0.6s ease forwards;
+  text-decoration: none; 
+  transition:all 0.3s ease;
+}
+
 
 @keyframes slideinleft{
   0%   { transform: translateX(-100%); opacity: 0; }
@@ -136,28 +149,7 @@ transition:transform 0.3s ease;
   100% {
     color: white;
   }
-
 }
-.nav-menu {
-  width: 74%;
-  margin: 0 auto;
-}
-
-.slidein {
-  height:20%;
-  margin-top:8rem;
-  display:block;
-  animation: slideinleft 1s ease forwards;
- 
-}
-
-.slidein a {
-  color: cyan; 
-  animation: linkColorChange 1.3s ease forwards;
-  text-decoration: none; 
-  transition:all 0.3s ease;
-}
-
 .nav-menu a:hover {
   color: cyan;
   font-weight: bold;
@@ -168,6 +160,13 @@ transition:transform 0.3s ease;
 .nav-menu {
   width: 74%;
   margin: 0 auto;
+}
+
+.logout{
+  position:absolute;
+  width:100%;
+  top:60rem;
+  z-index:1;
 }
 
 .slidein {
@@ -615,3 +614,147 @@ p {
   
 }
 
+
+//login & signup
+/* General Reset and Box Model */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Body Background */
+body {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+  transition: transform 0.3s ease;
+  background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0, 0.8)), url('./assets/green.jpg');
+  background-size: cover;
+  background-position: top center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Wrapper Style */
+.wrapper {
+  width: 420px;
+  background: rgba(0, 0, 0, 0.4); /* fallback background */
+  color: cyan;
+  border-radius: 10px;
+  padding: 30px 40px;
+margin:12rem auto;}
+
+/* Heading */
+.wrapper h2 {
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Input Field Wrapper */
+.input-box {
+  position: relative;
+  margin: 20px 0;
+  width: 100%;
+}
+
+/* Input Fields */
+.input-box input {
+  width: 100%;
+  height: 45px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 40px;
+  font-size: 16px;
+  color: white;
+  padding: 0 20px;
+  outline: none;
+}
+
+/* Input Placeholder */
+.input-box input::placeholder {
+  color: white;
+}
+
+/* Icon in input */
+.input-box i {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+}
+
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Remember me + Forgot */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: -10px 0 20px;
+}
+
+.remember-forgot label input {
+  accent-color: white;
+  margin-right: 5px;
+}
+
+.remember-forgot a {
+  color: white;
+  text-decoration: none;
+}
+
+.remember-forgot a:hover {
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.btn {
+  width: 100%;
+  height: 45px;
+  background: white;
+  color: #333;
+  border: none;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #f0f0f0;
+}
+
+/* Register Link */
+.register-link {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.register-link a {
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
