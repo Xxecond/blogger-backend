@@ -4,18 +4,20 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 
-dotenv.config(); // Load .env file
-connectDB();     // Connect to MongoDB
+dotenv.config();
+connectDB();
 
 const app = express();
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+// ✅ FIX: Allow frontend on Vercel to access backend
+app.use(cors({
+  origin: 'https://blogger-frontend-self.vercel.app',
+  credentials: true,
+}));
+
 app.use(express.json());
+app.use('/api/auth', authRoutes);
 
-// Use routes
-app.use('/api/auth', authRoutes); // All auth routes start with /api/auth
-
-// Start server
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });
