@@ -1,4 +1,4 @@
-const express = require('express');
+ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -9,7 +9,6 @@ connectDB();
 
 const app = express();
 
-// ✅ CORS config
 const corsOptions = {
   origin: ['http://localhost:5173', 'https://blogger-frontend-self.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -18,9 +17,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // 🟡 Handle preflight
+
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
