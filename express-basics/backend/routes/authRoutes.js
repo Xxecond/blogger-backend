@@ -8,11 +8,12 @@ const router = express.Router();
 
 // Email transporter setup
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: "Gmail", 
   auth: {
-    user: process.env.EMAIL,
-    pass: process.env.EMAIL_PASS,
-  },
+  user: process.env.EMAIL_USER,
+  pass: process.env.EMAIL_PASS,
+}
+,
 });
 
 // ✅ Email regex for validation
