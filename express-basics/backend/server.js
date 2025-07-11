@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const postRoutes = require('./routes/postRoutes'); // ✅ Add post routes
 
 dotenv.config();
 connectDB();
@@ -17,10 +18,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // 🟡 Handle preflight
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
+
 app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes); // ✅ User-specific posts route
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
