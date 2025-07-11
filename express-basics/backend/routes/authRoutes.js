@@ -6,20 +6,19 @@ const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const router = express.Router();
 
-// Email transporter setup
+// ✅ Email transporter setup
 const transporter = nodemailer.createTransport({
-  service: "Gmail", 
+  service: "Gmail",
   auth: {
-  user: process.env.EMAIL_USER,
-  pass: process.env.EMAIL_PASS,
-}
-,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
 // ✅ Email regex for validation
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-// Signup
+// ✅ Signup route
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -54,7 +53,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// Email verification
+// ✅ GET verification route (when user clicks the email link directly)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
@@ -72,7 +71,25 @@ router.get("/verify-email", async (req, res) => {
   }
 });
 
-// Login
+// ✅ POST verification route (for "Yes, it's me" button)
+router.post("/verify-email", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const user = await User.findOne({ verificationToken: token });
+    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.json({ message: "Email verified successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ Login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
