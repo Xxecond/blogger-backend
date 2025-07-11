@@ -22,6 +22,7 @@ app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
+//Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes); // ✅ User-specific posts route
 
