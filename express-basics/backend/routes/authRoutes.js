@@ -1,9 +1,10 @@
-const express = require("express");
+ const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
+
 const router = express.Router();
 
 // ✅ Email transporter setup
@@ -40,20 +41,32 @@ router.post("/signup", async (req, res) => {
     });
 
     const verifyLink = `${process.env.CLIENT_URL}/#/verifyEmail?token=${verificationToken}`;
- 
+
     await transporter.sendMail({
       to: email,
       subject: "Verify your email",
-      html: `<p>Click <a href="${verifyLink}">here</a> to verify your email.</p>`,
+      html: `
+        <p>Hi there,</p>
+        <p>Please click the button below to verify your email:</p>
+        <p>
+          <a href="${verifyLink}" 
+             style="padding: 10px 16px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+            Verify Email
+          </a>
+        </p>
+        <p>If the button above doesn't work, copy and paste this link in your browser:</p>
+        <p>${verifyLink}</p>
+      `,
     });
 
     res.status(200).json({ message: "Signup successful! Please check your email to verify." });
   } catch (err) {
+    console.error("Signup error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ✅ GET verification route (when user clicks the email link directly)
+// ✅ GET route (not used with button flow)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
@@ -67,24 +80,32 @@ router.get("/verify-email", async (req, res) => {
 
     res.send("Email verified successfully. You can now log in.");
   } catch (err) {
+    console.error("GET verify-email error:", err.message);
     res.status(500).send("Something went wrong.");
   }
 });
 
-// ✅ POST verification route (for "Yes, it's me" button)
+// ✅ POST route (used by frontend)
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
+  console.log("👉 Received token for verification:", token);
 
   try {
     const user = await User.findOne({ verificationToken: token });
-    if (!user) return res.status(400).json({ message: "Invalid or expired token" });
+
+    if (!user) {
+      console.log("❌ No user found for token:", token);
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
 
     user.isVerified = true;
     user.verificationToken = undefined;
     await user.save();
 
+    console.log("✅ User verified:", user.email);
     res.json({ message: "Email verified successfully" });
   } catch (err) {
+    console.error("🔥 Verification error:", err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -108,6 +129,7 @@ router.post("/login", async (req, res) => {
 
     res.status(200).json({ token });
   } catch (err) {
+    console.error("Login error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
