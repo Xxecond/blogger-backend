@@ -10,11 +10,11 @@ connectDB();
 
 const app = express();
 
-const corsOptions = { 
-  origin: [
-  'http://localhost:5173',
-  'https://blogger-frontend-self.vercel.app',
-],
+const corsOptions = {   origin: [
+    'http://localhost:5173',
+    'https://blogger-frontend-self.vercel.app',
+    'https://blogger-frontend-git-main-xxeconds-projects.vercel.app'
+  ],
 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
