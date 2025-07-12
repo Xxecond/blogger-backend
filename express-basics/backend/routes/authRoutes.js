@@ -1,4 +1,4 @@
- const express = require("express");
+const express = require("express");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -39,8 +39,8 @@ router.post("/signup", async (req, res) => {
       verificationToken,
     });
 
-    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
-
+    const verifyLink = `${process.env.CLIENT_URL}/#/verifyEmail?token=${verificationToken}`;
+ 
     await transporter.sendMail({
       to: email,
       subject: "Verify your email",
