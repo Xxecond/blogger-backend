@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/User");
+
 const router = express.Router();
 
 // Nodemailer setup
@@ -18,7 +19,7 @@ const transporter = nodemailer.createTransport({
 // Utility to validate email
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-// ✅ SIGNUP (with email verification)
+// ✅ SIGNUP
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -77,12 +78,15 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ✅ GET /verify-email (email link)
+// ✅ GET /verify-email (with message and login button)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=missing_token`);
+    return res.send(`
+      <h2 style="color:red">❌ Missing token</h2>
+      <a href="${process.env.CLIENT_URL}/#/login">Go to Login</a>
+    `);
   }
 
   try {
@@ -92,7 +96,10 @@ router.get("/verify-email", async (req, res) => {
     });
 
     if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=invalid_token`);
+      return res.send(`
+        <h2 style="color:red">❌ Invalid or expired token</h2>
+        <a href="${process.env.CLIENT_URL}/#/resend-verification">Resend Verification Email</a>
+      `);
     }
 
     user.isVerified = true;
@@ -100,14 +107,29 @@ router.get("/verify-email", async (req, res) => {
     user.verificationTokenExpiry = undefined;
     await user.save();
 
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
+    return res.send(`
+      <html>
+        <head><title>Email Verified</title></head>
+        <body style="font-family: sans-serif; text-align: center; padding-top: 80px;">
+          <h2 style="color: green;">✅ Email Verified Successfully!</h2>
+          <p>You can now log in to your Blogger account.</p>
+          <a href="${process.env.CLIENT_URL}/#/login?signup=true"
+             style="display: inline-block; margin-top: 20px; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px;">
+            Go to Login
+          </a>
+        </body>
+      </html>
+    `);
   } catch (err) {
     console.error("GET verification error:", err);
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=server_error`);
+    return res.send(`
+      <h2 style="color:red">❌ Server error</h2>
+      <a href="${process.env.CLIENT_URL}/#/login">Try again later</a>
+    `);
   }
 });
 
-// ✅ POST /verify-email (used by frontend with fetch)
+// ✅ POST /verify-email (used by frontend via fetch)
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
 
