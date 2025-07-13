@@ -77,12 +77,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ✅ GET /verify-email (when user clicks link in email)
+// ✅ GET /verify-email (email link)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
-    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=missing_token`);
+    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=missing_token`);
   }
 
   try {
@@ -92,7 +92,7 @@ router.get("/verify-email", async (req, res) => {
     });
 
     if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=invalid_token`);
+      return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=invalid_token`);
     }
 
     user.isVerified = true;
@@ -100,14 +100,14 @@ router.get("/verify-email", async (req, res) => {
     user.verificationTokenExpiry = undefined;
     await user.save();
 
-    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=true`);
+    return res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
   } catch (err) {
     console.error("GET verification error:", err);
-    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=server_error`);
+    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=server_error`);
   }
 });
 
-// ✅ POST /verify-email (used by frontend via fetch)
+// ✅ POST /verify-email (used by frontend with fetch)
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
 
