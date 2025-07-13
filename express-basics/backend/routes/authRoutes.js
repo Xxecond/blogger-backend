@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const router = express.Router();
 
-// ✅ Email transporter (configured for Gmail)
+// ✅ Email transporter (Gmail)
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -15,10 +15,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ Email validation
+// ✅ Email format check
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-// ✅ Signup
+// ✅ SIGNUP route
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -27,44 +27,39 @@ router.post("/signup", async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existing = await User.findOne({ email });
+    if (existing) {
       return res.status(400).json({ success: false, message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+    const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hrs
 
     const newUser = new User({
       email,
       password: hashedPassword,
       verificationToken,
       verificationTokenExpires,
-      verified: false,
+      isVerified: false,
     });
 
     await newUser.save();
 
-    const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${verificationToken}`;
+    const verifyUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${verificationToken}`;
 
     await transporter.sendMail({
       from: `"Blogger App" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Verify Your Email Address",
+      subject: "Verify Your Email",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px;">
-          <h2>Welcome to Blogger App!</h2>
-          <p>Click below to verify your email:</p>
-          <a href="${verificationUrl}" 
-             style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 4px;">
-            Verify Email
-          </a>
-          <p style="margin-top: 20px;">
-            <small>If the button above doesn't work, copy and paste this URL into your browser:</small><br/>
-            <code>${verificationUrl}</code>
-          </p>
-        </div>
+        <h2>Welcome to Blogger App</h2>
+        <p>Click the button below to verify your email:</p>
+        <a href="${verifyUrl}" style="padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px;">
+          Verify Email
+        </a>
+        <p>If that doesn't work, copy and paste this URL:</p>
+        <code>${verifyUrl}</code>
       `,
     });
 
@@ -78,12 +73,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ✅ GET email verification (when user clicks the email link)
+// ✅ GET Verify route (clicked from email)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=missing_token`);
+    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=missing_token`);
   }
 
   try {
@@ -93,27 +88,27 @@ router.get("/verify-email", async (req, res) => {
     });
 
     if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=invalid_token`);
+      return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=invalid_token`);
     }
 
-    user.verified = true;
+    user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
     await user.save();
 
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
+    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=true`);
   } catch (error) {
-    console.error("Verification error:", error);
-    return res.redirect(`${process.env.CLIENT_URL}/login?verified=false&error=server_error`);
+    console.error("GET verify error:", error);
+    return res.redirect(`${process.env.CLIENT_URL}/#/login?verified=false&error=server_error`);
   }
 });
 
-// ✅ POST email verification (for React "Yes, it's me" button if used)
+// ✅ POST Verify route (optional - used by "Yes it's me" button)
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
 
   if (!token) {
-    return res.status(400).json({ success: false, message: "Verification token required" });
+    return res.status(400).json({ success: false, message: "Token required" });
   }
 
   try {
@@ -123,53 +118,50 @@ router.post("/verify-email", async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
+      return res.status(400).json({ success: false, message: "Invalid or expired token" });
     }
 
-    user.verified = true;
+    user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
     await user.save();
 
-    res.status(200).json({ success: true, message: "Email verified successfully", email: user.email });
+    res.status(200).json({ success: true, message: "Email verified", email: user.email });
   } catch (error) {
     console.error("POST verify error:", error);
-    res.status(500).json({ success: false, message: "Server error during verification" });
+    res.status(500).json({ success: false, message: "Verification error" });
   }
 });
 
-// ✅ Login
+// ✅ LOGIN route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
-    }
+    if (!user) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
-    if (!user.verified) {
+    if (!user.isVerified) {
       return res.status(403).json({ success: false, message: "Please verify your email first" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
-    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
     res.status(200).json({
       success: true,
       message: "Login successful",
       token,
-      user: { id: user._id, email: user.email },
+      user: {
+        id: user._id,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ success: false, message: "Server error during login" });
+    res.status(500).json({ success: false, message: "Login failed" });
   }
 });
 
