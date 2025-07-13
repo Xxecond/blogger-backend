@@ -6,7 +6,7 @@ const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const router = express.Router();
 
-// Email transporter configuration
+// Email transporter (configured for Gmail)
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -15,27 +15,37 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Email validation regex
+// Email validation
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-// Signup Route
+// Signup with email verification
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
+  // Validate email format
   if (!isValidEmail(email)) {
-    return res.status(400).json({ message: "Invalid email format" });
+    return res.status(400).json({ 
+      success: false,
+      message: "Invalid email format" 
+    });
   }
 
   try {
+    // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Email already registered" 
+      });
     }
 
+    // Hash password and generate verification token
     const hashedPassword = await bcrypt.hash(password, 12);
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
 
+    // Create new user
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -46,54 +56,57 @@ router.post("/signup", async (req, res) => {
 
     await newUser.save();
 
+    // Generate verification link
     const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email?token=${verificationToken}`;
 
-    const mailOptions = {
-      from: `"Your App" <${process.env.EMAIL_USER}>`,
+    // Send verification email
+    await transporter.sendMail({
+      from: `"Blogger App" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Verify Your Email Address",
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Welcome to Our App!</h2>
-          <p>Please click the button below to verify your email address:</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px;">
+          <h2>Welcome to Blogger App!</h2>
+          <p>Click below to verify your email:</p>
           <a href="${verificationUrl}" 
-             style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; 
-                    color: white; text-decoration: none; border-radius: 4px; margin: 20px 0;">
+             style="display: inline-block; padding: 12px 24px; 
+                    background-color: #2563eb; color: white; 
+                    text-decoration: none; border-radius: 4px;">
             Verify Email
           </a>
-          <p>If you didn't request this, please ignore this email.</p>
-          <p style="font-size: 12px; color: #777;">Verification token expires in 24 hours.</p>
+          <p style="margin-top: 20px;">
+            <small>If you didn't request this, please ignore this email.</small>
+          </p>
         </div>
       `
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     res.status(201).json({
       success: true,
-      message: "Signup successful! Please check your email to verify your account."
+      message: "Signup successful! Check your email for verification."
     });
 
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({
       success: false,
-      message: "An error occurred during signup. Please try again."
+      message: "Server error during signup"
     });
   }
 });
 
-// GET Email Verification Endpoint
+// Email Verification (GET - for email links)
 router.get("/verify-email", async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
     return res.redirect(
-      `${process.env.CLIENT_URL}/login?verified=false&reason=no_token`
+      `${process.env.CLIENT_URL}/login?verified=false&error=missing_token`
     );
   }
 
   try {
+    // Find user with valid token
     const user = await User.findOne({ 
       verificationToken: token,
       verificationTokenExpires: { $gt: Date.now() }
@@ -101,15 +114,17 @@ router.get("/verify-email", async (req, res) => {
 
     if (!user) {
       return res.redirect(
-        `${process.env.CLIENT_URL}/login?verified=false&reason=invalid_or_expired`
+        `${process.env.CLIENT_URL}/login?verified=false&error=invalid_token`
       );
     }
 
+    // Mark as verified
     user.verified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpires = undefined;
     await user.save();
 
+    // Redirect to frontend with success
     res.redirect(
       `${process.env.CLIENT_URL}/login?verified=true&email=${encodeURIComponent(user.email)}`
     );
@@ -117,19 +132,19 @@ router.get("/verify-email", async (req, res) => {
   } catch (error) {
     console.error("Verification error:", error);
     res.redirect(
-      `${process.env.CLIENT_URL}/login?verified=false&reason=server_error`
+      `${process.env.CLIENT_URL}/login?verified=false&error=server_error`
     );
   }
 });
 
-// POST Email Verification Endpoint
+// Manual Verification (POST - for frontend)
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
 
   if (!token) {
     return res.status(400).json({
       success: false,
-      message: "No verification token provided"
+      message: "Verification token required"
     });
   }
 
@@ -161,18 +176,18 @@ router.post("/verify-email", async (req, res) => {
     console.error("Verification error:", error);
     res.status(500).json({
       success: false,
-      message: "An error occurred during verification"
+      message: "Server error during verification"
     });
   }
 });
 
-// Login Route
+// Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Find user
     const user = await User.findOne({ email });
-    
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -180,23 +195,26 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // Check verification status
     if (!user.verified) {
       return res.status(403).json({
         success: false,
-        message: "Please verify your email before logging in"
+        message: "Please verify your email first"
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    // Validate password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
         message: "Invalid credentials"
       });
     }
 
-    const authToken = jwt.sign(
-      { userId: user._id, email: user.email },
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -204,7 +222,7 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Login successful",
-      token: authToken,
+      token,
       user: {
         id: user._id,
         email: user.email
@@ -215,7 +233,7 @@ router.post("/login", async (req, res) => {
     console.error("Login error:", error);
     res.status(500).json({
       success: false,
-      message: "An error occurred during login"
+      message: "Server error during login"
     });
   }
 });
