@@ -10,12 +10,12 @@ connectDB();
 
 const app = express();
 
-const corsOptions = {   origin: [
+const corsOptions = {
+  origin: [
     'http://localhost:5173',
     'https://blogger-frontend-self.vercel.app',
     'https://blogger-frontend-git-main-xxeconds-projects.vercel.app'
   ],
-
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -24,9 +24,11 @@ const corsOptions = {   origin: [
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
-app.use(express.json());
+// ✅ Increase body size limit to fix image upload issue
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-//Routes
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes); // ✅ User-specific posts route
 
